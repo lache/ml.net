@@ -200,8 +200,8 @@ void Word2Vec::init_weights(size_t vocab_size)
 	std::uniform_real_distribution<float> distribution(-0.5, 0.5);
 	auto uniform = [&] (int) {return distribution(generator);};
 
-	W = RMatrixXf::NullaryExpr(vocab_size, word_dim, uniform);
-	W = W / (float)word_dim ;
+	WEmbedding = RMatrixXf::NullaryExpr(vocab_size, word_dim, uniform);
+	WEmbedding = WEmbedding / (float)word_dim ;
 
 	if(train_method == "hs")
 		synapses1 =RMatrixXf::Zero(vocab_size - 1, word_dim);
@@ -307,7 +307,7 @@ void Word2Vec::train_sentence_cbow(vector<Word *>& sentence, float alpha)
 		}
 		if (negative > 0)
 		{
-			neu1_grad = negative_sampling(current_word, neu1, neu1_grad, W, alpha);
+			neu1_grad = negative_sampling(current_word, neu1, neu1_grad, WEmbedding, alpha);
 		}
 		// hidden -> in
 		if(cbow_mean)
@@ -327,7 +327,7 @@ void Word2Vec::train_sentence_sg(vector<Word *>& sentence, float alpha)
 		Word* current_word = sentence[i];
 
 		neu1_grad.setZero();
-		neu1 = W.row(current_word->index);
+		neu1 = WEmbedding.row(current_word->index);
 
 		if(current_word->sample_probability < uni_dis(generator))
 			continue;
@@ -348,10 +348,9 @@ void Word2Vec::train_sentence_sg(vector<Word *>& sentence, float alpha)
 				neu1_grad = negative_sampling(sentence[j], neu1, neu1_grad, C, alpha);
 			}
 		}
-		W.row(sentence[i]->index) += neu1_grad;
+		WEmbedding.row(sentence[i]->index) += neu1_grad;
 	}
 }
-
 
 void Word2Vec::train(vector<vector<string>> &sentences)
 {
@@ -393,6 +392,49 @@ void Word2Vec::train(vector<vector<string>> &sentences)
 			current_words += samples[s_id].size();
 		}
 	}
+
+	// self.syn0norm = (self.syn0 / sqrt((self.syn0 ** 2).sum(-1))[..., newaxis]).astype(REAL)
+	// TODO
+}
+
+W2VResList Word2Vec::most_similar(const string& pos, int N)
+{
+	auto it = vocab_hash.find(pos);
+	if (it == vocab_hash.end()) return W2VResList();
+
+	vector<RowVectorXf> posList;
+	posList.emplace_back(WEmbedding.row(it->second->index));
+	return most_similar(posList, EmptyQueryList, N);
+}
+
+W2VResList Word2Vec::most_similar(const vector<string>& posWordList, const vector<string>& negWordList, int N)
+{
+	vector<RowVectorXf> posList;
+	for (auto& word : posWordList)
+	{
+		auto it = vocab_hash.find(word);
+		if (it == vocab_hash.end()) continue;
+		posList.emplace_back(WEmbedding.row(it->second->index));
+	}
+	
+	vector<RowVectorXf> negList;
+	for (auto& word : negWordList)
+	{
+		auto it = vocab_hash.find(word);
+		if (it == vocab_hash.end()) continue;
+		negList.emplace_back(WEmbedding.row(it->second->index));
+	}
+	
+	return most_similar(posList, negList, N);
+}
+
+W2VResList Word2Vec::most_similar(const vector<RowVectorXf>& posVecList, const vector<RowVectorXf>& negVecList, int N)
+{
+	RowVectorXf posVec = RowVectorXf::Zero(word_dim);
+	RowVectorXf negVec = RowVectorXf::Zero(word_dim);
+
+	auto& res = WEmbedding * posVecList[0];
+	return vector<pair<string, float>>();
 }
 
 void Word2Vec::save_word2vec(string filename, const RMatrixXf& data, bool binary)
@@ -465,7 +507,7 @@ void Word2Vec::load_word2vec(string filename, bool binary)
 				text += temp_char;
 				in.read(&temp_char, size);
 			}
-			in.read((char*) W.row(vocab_hash[text]->index).data(), r_size);
+			in.read((char*) WEmbedding.row(vocab_hash[text]->index).data(), r_size);
 			in.read(&temp_char, size);
 		}
 		in.close();
@@ -483,7 +525,7 @@ void Word2Vec::load_word2vec(string filename, bool binary)
 		{
 			istringstream iss(s);
 			iss >> text;
-			auto w2v = W.row(vocab_hash[text]->index);
+			auto w2v = WEmbedding.row(vocab_hash[text]->index);
 
 			for(int i = 0; i < word_dim; ++i)
 			{

@@ -26,6 +26,9 @@ using namespace Eigen;
 #define EIGEN_NO_DEBUG
 
 typedef Matrix<float, Dynamic, Dynamic, RowMajor> RMatrixXf;
+typedef vector<pair<string, float>> W2VResList;
+const vector<RowVectorXf> EmptyQueryList;
+
 
 class Word2Vec
 {
@@ -51,7 +54,7 @@ public:
 	unordered_map<string, WordP> vocab_hash;
 	vector<size_t> table;
 
-	RMatrixXf W, synapses1, C;
+	RMatrixXf WEmbedding, synapses1, C;
 
 	std::random_device rd;
 	std::mt19937 generator;
@@ -85,6 +88,9 @@ public:
 	void train_sentence_sg(vector<Word *>& sentence, float alpha);
 
 	void train(vector<vector<string>> &sentences);
+	W2VResList most_similar(const string & pos, int N);
+	W2VResList most_similar(const vector<string>& posWordList, const vector<string>& negWordList, int N);
+	W2VResList most_similar(const vector<RowVectorXf>& posVecList, const vector<RowVectorXf>& negVecList, int N);
 
 	void save_word2vec(string filename, const RMatrixXf& data, bool binary=false);
 	void load_word2vec(string word2vec_filename, bool binary=false);

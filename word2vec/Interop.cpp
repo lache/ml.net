@@ -68,7 +68,7 @@ void LoadVocab(void* word2vec, const char* vocab_filename)
 
 void SaveWord2Vec(void* word2vec, const char* word2vec_filename, int data_type, bool binary)
 {
-	W2B(word2vec)->save_word2vec(word2vec_filename, data_type == 1 ? W2B(word2vec)->C : W2B(word2vec)->W, binary);
+	W2B(word2vec)->save_word2vec(word2vec_filename, data_type == 1 ? W2B(word2vec)->C : W2B(word2vec)->WEmbedding, binary);
 }
 
 void LoadWord2Vec(void* word2vec, const char* word2vec_filename, bool binary)

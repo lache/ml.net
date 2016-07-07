@@ -1,4 +1,6 @@
-﻿#include "Word2Vec.h"
+﻿#include <string>
+
+#include "Word2Vec.h"
 
 inline bool comp(Word *w1, Word *w2)
 {
@@ -433,8 +435,12 @@ W2VResList Word2Vec::most_similar(const vector<RowVectorXf>& posVecList, const v
 	RowVectorXf posVec = RowVectorXf::Zero(word_dim);
 	RowVectorXf negVec = RowVectorXf::Zero(word_dim);
 
-	auto& res = WEmbedding * posVecList[0];
-	return vector<pair<string, float>>();
+	//auto& res = WEmbedding * posVecList[0];
+	vector<pair<string, float>> res;
+	for (int i = 1; i <= N; i++)
+		res.emplace_back(make_pair(std::to_string(i), 1.0 - (1.0 / i) / 10.0));
+	
+	return res;
 }
 
 void Word2Vec::save_word2vec(string filename, const RMatrixXf& data, bool binary)

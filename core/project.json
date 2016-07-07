@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+  "dependencies": {},
+  "frameworks": {
+    "netstandard1.3": { 
+      "imports": "dnxcore50" 
+    }
+  }
+}

@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 		if(train_method == "hs" && model == "cbow")
 			w2v.save_word2vec(output_file, w2v.C);	
 		else
-			w2v.save_word2vec(output_file, w2v.W);
+			w2v.save_word2vec(output_file, w2v.WEmbedding);
 	}
 
 	return 0;

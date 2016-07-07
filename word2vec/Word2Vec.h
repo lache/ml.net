@@ -15,7 +15,11 @@
 #include <iostream>
 #include <iterator>
 #include <cstdint>
+
+#ifdef WIN32
 #include <omp.h>
+#endif
+
 #include <Eigen/Dense>
 
 #include "Word.h"

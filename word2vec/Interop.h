@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+	struct MostSimilarPair
+	{
+		char* item;
+		float score;
+	};
+
 	DLL_ENTRY void* InitWord2Vec(int iter, int window, int min_count, int table_size, int word_dim,
 		int negative, float subsample_threshold, float init_alpha, float min_alpha,
 		bool cbow_mean, int num_threads, const char* train_method, const char* model);
@@ -28,6 +34,11 @@ extern "C" {
 	DLL_ENTRY void LoadVocab(void* word2vec, const char* vocab_filename);
 	DLL_ENTRY void SaveWord2Vec(void* word2vec, const char* word2vec_filename, int data_type, bool binary);
 	DLL_ENTRY void LoadWord2Vec(void* word2vec, const char* word2vec_filename, bool binary);
+
+#if 0
+	DLL_ENTRY bool most_similar(void* word2vec, const char* pos, int N, MostSimilarPair** result);
+	DLL_ENTRY bool most_similar(void* word2vec, const vector<string>& posWordList, const vector<string>& negWordList, int N, MostSimilarPair** result);
+#endif
 
 #ifdef __cplusplus
 }

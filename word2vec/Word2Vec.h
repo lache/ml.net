@@ -16,7 +16,7 @@
 #include <iterator>
 #include <cstdint>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <omp.h>
 #endif
 
@@ -74,7 +74,6 @@ public:
 		bool cbow_mean=false, int num_threads=1, string train_method="hs", string model="cbow");
 
 	vector<vector<string>> line_docs(string file_name);
-	void reduce_vocab();
 	void create_huffman_tree();
 	void make_table();
 	void precalc_sampling();

@@ -438,7 +438,7 @@ W2VResList Word2Vec::most_similar(const vector<RowVectorXf>& posVecList, const v
 	//auto& res = WEmbedding * posVecList[0];
 	vector<pair<string, float>> res;
 	for (int i = 1; i <= N; i++)
-		res.emplace_back(make_pair(std::to_string(i), 1.0 - (1.0 / i) / 10.0));
+		res.emplace_back(make_pair(std::to_string(i), 1.0f - (1.0f / i) / 10.0f));
 	
 	return res;
 }

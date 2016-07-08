@@ -75,3 +75,16 @@ DLL_ENTRY void LoadWord2Vec(void* word2vec, const char* word2vec_filename, bool 
 {
 	W2B(word2vec)->load_word2vec(word2vec_filename, binary);
 }
+
+#if 0
+DLL_ENTRY bool most_similar(void* word2vec, const char*  pos, int N, MostSimilarPair** result)
+{
+	auto& ret = W2B(word2vec)->most_similar(pos, N);
+	return true;
+}
+
+DLL_ENTRY bool most_similar(void* word2vec, const vector<string>& posWordList, const vector<string>& negWordList, int N, MostSimilarPair** result)
+{
+
+}
+#endif

@@ -1,12 +1,14 @@
-{
+﻿{
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true
   },
-  "dependencies": {},
+  "dependencies": {
+    "NUnit": "3.4.1"
+  },
   "frameworks": {
-    "netstandard1.3": { 
-      "imports": "dnxcore50" 
+    "netstandard1.3": {
+      "imports": "dnxcore50"
     }
   }
 }
